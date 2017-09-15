@@ -24,7 +24,7 @@
 	"homepage": "https://github.com/rafaelbm91/vue-captcha#readme",
 	"dependencies": {
     "font-awesome": "^4.7.0",
-    "uuid": "^3.1.0",
+    "uuid": "^3.1.0"
   },
 	"engines": {
     "node": ">= 4.0.0",
