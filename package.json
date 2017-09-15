@@ -1,0 +1,38 @@
+{
+  "name": "vue-captcha",
+  "version": "1.0.0",
+  "description": "Component (es6) Captcha for Vue.js",
+  "main": "vue-captcha.vue",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rafaelbm91/vue-captcha.git"
+  },
+  "keywords": [
+    "javascript",
+    "vuejs",
+    "captcha",
+    "component"
+  ],
+  "author": "Rafael Briceño · rafael.ata1991@gmail.com · @rafaelbm91 · https://rafaelbm9a.github.io",
+  "license": "MIT",
+	"bugs": {
+    "url": "https://github.com/rafaelbm91/vue-captcha/issues"
+  },
+	"homepage": "https://github.com/rafaelbm91/vue-captcha#readme",
+	"dependencies": {
+    "font-awesome": "^4.7.0",
+    "uuid": "^3.1.0",
+  },
+	"engines": {
+    "node": ">= 4.0.0",
+    "npm": ">= 3.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ]
+}
