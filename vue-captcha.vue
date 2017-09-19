@@ -1,17 +1,17 @@
 <template>
   <div id="VueCaptcha" class="vue-captcha" v-bind:style="`border: 1px solid ${color};`">
 		<div class="content-captcha">
-			<canvas class="vue-captcha-img"  width="150" height="25"></canvas>
+			<canvas class="vue-captcha-img" width="150" height="25"></canvas>
 		</div>
 		<div class="content-text" v-show="opc === 1 && !auth">
-			<input type="text" v-on:keyup="inputText" v-model="text" placeholder="insert key..."/>
+			<input type="text" v-on:keyup="inputText" v-model="text" placeholder="insert key..." />
 		</div>
 		<div class="content-ok" v-show="auth" v-bind:style="`background-color: ${color};`">
 			<small> <i class="fa fa-thumbs-up"></i> success.!</small>
 		</div>
 		<div class="content-fixed" v-show="opc === 2 && !auth" v-bind:style="`top:${contenTextTop}px;left:${contenTextLeft}px;`">
 			<table class="vue-captcha-table" cellspaceng="0">
-				<tr>
+				<tr v-show="mode === 'text'">
 					<td class="vue-captcha-table-item" v-on:click="selectItem">1</td>
 					<td class="vue-captcha-table-item vue-captcha-table-item-center" v-on:click="selectItem">2</td>
 					<td class="vue-captcha-table-item" v-on:click="selectItem">3</td>
@@ -23,7 +23,7 @@
 					<td class="vue-captcha-table-item" v-on:click="selectItem">9</td>
 					<td class="vue-captcha-table-item vue-captcha-table-item-right" v-on:click="selectItem">0</td>
 				</tr>
-				<tr>
+				<tr v-show="mode === 'text'">
 					<td class="vue-captcha-table-item" v-on:click="selectItem">q</td>
 					<td class="vue-captcha-table-item vue-captcha-table-item-center" v-on:click="selectItem">w</td>
 					<td class="vue-captcha-table-item" v-on:click="selectItem">e</td>
@@ -35,7 +35,7 @@
 					<td class="vue-captcha-table-item" v-on:click="selectItem">o</td>
 					<td class="vue-captcha-table-item vue-captcha-table-item-right" v-on:click="selectItem">p</td>
 				</tr>
-				<tr>
+				<tr v-show="mode === 'text'">
 					<td class="vue-captcha-table-item" v-on:click="selectItem">a</td>
 					<td class="vue-captcha-table-item vue-captcha-table-item-center" v-on:click="selectItem">s</td>
 					<td class="vue-captcha-table-item" v-on:click="selectItem">d</td>
@@ -46,7 +46,7 @@
 					<td class="vue-captcha-table-item vue-captcha-table-item-center" v-on:click="selectItem">k</td>
 					<td class="vue-captcha-table-item" v-on:click="selectItem">l</td>
 				</tr>
-				<tr>
+				<tr v-show="mode === 'text'">
 					<td class="vue-captcha-table-item"></td>
 					<td class="vue-captcha-table-item" v-on:click="selectItem">z</td>
 					<td class="vue-captcha-table-item vue-captcha-table-item-center" v-on:click="selectItem">x</td>
@@ -56,17 +56,31 @@
 					<td class="vue-captcha-table-item vue-captcha-table-item-center" v-on:click="selectItem">n</td>
 					<td class="vue-captcha-table-item" v-on:click="selectItem">m</td>
 				</tr>
+        <tr v-show="mode === 'math'">
+					<td class="vue-captcha-table-item" v-on:click="selectItemNum">{{arrayForNum[0]}}</td>
+					<td class="vue-captcha-table-item vue-captcha-table-item-center" v-on:click="selectItemNum">{{arrayForNum[1]}}</td>
+					<td class="vue-captcha-table-item" v-on:click="selectItemNum">{{arrayForNum[2]}}</td>
+					<td class="vue-captcha-table-item vue-captcha-table-item-center" v-on:click="selectItemNum">{{arrayForNum[3]}}</td>
+					<td class="vue-captcha-table-item" v-on:click="selectItemNum">{{arrayForNum[4]}}</td>
+					<td class="vue-captcha-table-item vue-captcha-table-item-center" v-on:click="selectItemNum">{{arrayForNum[5]}}</td>
+					<td class="vue-captcha-table-item" v-on:click="selectItemNum">{{arrayForNum[6]}}</td>
+					<td class="vue-captcha-table-item vue-captcha-table-item-center" v-on:click="selectItemNum">{{arrayForNum[7]}}</td>
+					<td class="vue-captcha-table-item" v-on:click="selectItemNum">{{arrayForNum[8]}}</td>
+					<td class="vue-captcha-table-item vue-captcha-table-item-right" v-on:click="selectItemNum">{{arrayForNum[9]}}</td>
+				</tr>
 			</table>
 		</div>
 		<div class="options" v-show="!auth">
-			<button type="button" v-on:click="picture" v-bind:style="`color: ${color};`">
+			<button type="button" v-on:click="picture" v-bind:style="`color: ${color};`" title="Refresh">
 				<i class="fa fa-refresh"></i>
 			</button>
-			<button type="button" v-on:click="opc = 1" v-bind:style="`color: ${color};`">
-				<i class="fa fa-align-left"></i>
+			<button type="button" v-on:click="opc = (opc === 1) ? 0 : 1"
+        v-bind:style="`color: ${color};`" v-show="resolve === 'text' || resolve === 'all'" title="Written">
+				<i class="fa fa-pencil"></i>
 			</button>
-			<button type="button" v-on:click="ContentFixed" v-bind:style="`color: ${color};`">
-				<i class="fa fa-table"></i>
+			<button type="button" v-on:click="ContentFixed"
+        v-bind:style="`color: ${color};`" v-show="resolve === 'digit' || resolve === 'all'" title="Digit">
+				<i class="fa fa-keyboard-o"></i>
 			</button>
 		</div>
   </div>
@@ -89,10 +103,20 @@
 				type: String,
       	required: false,
 				default: '#1D9D74'
-			}
+			},
+      mode: {
+        type: String,
+        required: false,
+        default: 'text'   // (default) 'text' -> alphanumeric | 'math' -> operations math
+      },
+      resolve: {
+        type: String,
+        required: false,
+        default: 'all'    // (default) 'all' -> written and digit | 'text' -> only written | 'digit' -> only digit
+      }
 		},
 		data () {
-			return {
+			return { 
 				key: '',
 				auth: false,
 				opc: 0,
@@ -100,12 +124,21 @@
 				contenTextTop: 200,
 				contenTextLeft: 200,
 				errorSelect: 0,
-				success: 0
+				success: 0,
+        preSuccess: false,
+        arrayForNum: []
 			}
 		},
 		mounted () {
-			this.picture()
-			console.log( [this.$el] )
+      if ( (this.mode === 'text' || this.mode === 'math') ) {
+        if ( (this.resolve === 'all' || this.resolve === 'text' || this.resolve === 'digit') ) {
+    			this.picture()
+        } else {
+          console.error('[Vue-Captcha] Error: option resolve = \'all\' Or \'text\' Or \'digit\', Not valid \''+this.resolve+'\'.')
+        }
+      } else {
+        console.error('[Vue-Captcha] Error: option mode = \'text\' Or \'math\'.')
+      }
 		},
 		watch: {
 			errorSelect (error) {
@@ -121,14 +154,22 @@
 		},
 		methods: {
 			getKey () {
-				let newKey
-				do {
-					newKey = uuid()
-					newKey = newKey.replace('-', '')
-					newKey = newKey.substr(5, 6)
-				} while( this.codex(newKey) )
-				this.key = newKey
+				let newKey = null
+
+        if (this.mode === 'text') {
+  				do {
+	  				newKey = uuid()
+		  			newKey = newKey.replace('-', '')
+			  		newKey = newKey.substr(5, 6)
+          } while( this.codex(newKey) )
+          this.key = newKey
+        } else if (this.mode === 'math') {
+          newKey = this.operation()
+          this.key = eval( newKey )
+        }
+
 				this.opc = 0
+        return newKey
 			},
 			picture () {
 				const image = this.$el.children[0].children[0]
@@ -151,22 +192,37 @@
 				ctx.lineTo(150, 20);
 				ctx.stroke();
 
-				this.getKey()
-				ctx.fillText(this.key, 35, 22)
+        let left = (this.mode === 'text') ? 35 : 32
+				ctx.fillText(this.getKey(), left, 22)
 			},
 			inputText () {
-				if (this.key === this.text) {
+        let text = (this.mode === 'math') ? Number.parseInt( this.text ) : this.text
+				if (this.key === text) {
 					this.auth = true
 					this.success = 6
 				}
 			},
 			ContentFixed () {
-				this.contenTextTop = this.$el.offsetTop + 10
-				this.contenTextLeft = this.$el.offsetLeft + 210
-				this.opc = 2
+        let el = this.$el
+        let _x = 0
+        let _y = 0
+
+        /*** position of component for show keyboard ***/
+        while( el && !isNaN( el.offsetLeft ) && !isNaN( el.offsetTop ) ) {
+          _x += el.offsetLeft - el.scrollLeft;
+          _y += el.offsetTop - el.scrollTop;
+          el = el.offsetParent;
+        }
+
+        this.contenTextTop = _y + 10
+        this.contenTextLeft = _x + 210
+
+				this.opc = (this.opc === 2) ? 0 : 2
 			},
 			selectItem (e) {
-				let value = e.target.innerText
+				if (this.mode === 'math') return
+
+        let value = e.target.innerText
 				if (e.target.className.indexOf(' red') === -1) {
 					if (e.target.className.indexOf(' blue') === -1) {
 						if (this.key.indexOf(value) === -1) {
@@ -187,6 +243,29 @@
 	
 				this.auth = (this.success === 6 && this.errorSelect === 0)
 			},
+      selectItemNum (e) {
+        if (this.mode === 'text') return
+
+        let value = e.target.innerText
+        let key = String(this.key)
+
+        if (value !== key) {
+          if (e.target.className.indexOf(' red') === -1) {
+            e.target.className += ' red'
+            this.errorSelect++
+          } else {
+            e.target.className = e.target.className.replace(' red','')
+            this.errorSelect--
+          }
+        }
+        if ( (value === key || this.preSuccess)  && this.errorSelect === 0) {
+          this.auth = true
+					this.success = 6
+        } else if (value === key) {
+          this.preSuccess = true
+          e.target.className += ' blue'
+        }
+      },
 			codex (key) {
 				let no = false
 				for (let x=0; x<key.length; x++) {
@@ -202,7 +281,27 @@
 					}
 				}
 				return no
-			}
+			},
+      operation () {
+        let max = 20
+        let a = Math.floor((Math.random() * max) + 10)
+        let b = Math.floor((Math.random() * max) + 10)
+        let o = Math.floor((Math.random() * 9) + 0)
+        let cadena = `${a} + ${b}`
+        let result = eval( cadena )
+
+        /*** CONTROL ARRAY FOR RANDOM SELECT  ***/
+        do {
+          let pre = Math.floor((Math.random() * max) + 10) 
+          if (pre !== result) {
+            this.arrayForNum.push( pre )
+          }
+        } while(this.arrayForNum.length < 10)
+        this.arrayForNum[o] = result
+        /***   ***/
+
+        return cadena
+      }
 		}
   }
 </script>
@@ -228,14 +327,23 @@
 	.options button:focus, .options button:active {
 		box-shadow: 0 0 0 2px #FFF, 0 0 0 3px #1D9D74;
 	}
-	.content-text {
+	div.content-text {
 		padding: 5px;
 	}
+  div.content-text > input {
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    height: 25px;
+    min-height: 25px;
+    max-height: 25px;
+    font-size: 13.33px;
+  }
 	.content-ok {
 		width: 150px;
     border-color: #e0f1e9;
     color: #f3faf8;
-		margin-left: 15px;
+		margin-left: 10px;
 		font-family: proxima-nova, 'Helvetica Neue', Helvetica, Arial, sans-serif;
 	}
 	.vue-captcha-btn {
