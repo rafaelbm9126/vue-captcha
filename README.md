@@ -73,16 +73,16 @@ export default {
     }
   },
   methods: {
-		captchaOk () {
-			console.log('captcha ok.!')
-		},
+    captchaOk () {
+      console.log('captcha ok.!')
+    },
     captchaBtn () {
      this.btndis = false
     },
     clicked () {
       alert('button active.!')
     }
-	},
+  },
   components: {
     'my-captcha': myCaptcha
   }
@@ -174,7 +174,7 @@ default: 'all' // 'all' -> written and digit | 'text' -> only written | 'digit' 
 ```javascript
 
 captchaOk = () => {
-	console.log('captcha ok.!')
+  console.log('captcha ok.!')
 }
 
 ```

@@ -1,6 +1,6 @@
 {
   "name": "vue-captcha",
-  "version": "1.0.2,
+  "version": "1.0.2",
   "description": "Component (es6) Captcha for Vue.js",
   "main": "vue-captcha.vue",
   "scripts": {
